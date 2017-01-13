@@ -29,3 +29,13 @@ void UCoolDownComp::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
     UE_LOG(LogMyTest, Warning, TEXT("--- UCoolDownComp::EndPlay"));
 }
+
+void UCoolDownComp::OnComponentCreated()
+{
+	UE_LOG(LogMyTest, Warning, TEXT("--- UCoolDownComp::OnComponentCreated"));
+}
+
+void UCoolDownComp::OnComponentDestroyed(bool bDestroyingHierarchy)
+{
+	UE_LOG(LogMyTest, Warning, TEXT("--- UCoolDownComp::OnComponentDestroyed"));
+}

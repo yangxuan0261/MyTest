@@ -14,6 +14,11 @@ AMyActor::~AMyActor()
     UE_LOG(LogMyTest, Warning, TEXT("--- AMyActor::~AMyActor, name:%s"), *mName);
 }
 
+void AMyActor::PostActorCreated()
+{
+	UE_LOG(LogMyTest, Warning, TEXT("--- AMyActor::PostActorCreated, name:%s"), *mName);
+}
+
 void AMyActor::BeginPlay()
 {
     Super::BeginPlay();
@@ -35,6 +40,11 @@ void AMyActor::BeginDestroy()
 {
     UE_LOG(LogMyTest, Warning, TEXT("--- AMyActor::BeginDestroy"));
     Super::BeginDestroy();
+}
+
+void AMyActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	UE_LOG(LogMyTest, Warning, TEXT("--- AMyActor::EndPlay"));
 }
 
 void AMyActor::Destroyed()
