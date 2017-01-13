@@ -13,7 +13,7 @@ public:
 	// Begin UActorComponent Interface.
 	virtual void BeginPlay() override; //组件被spawn的时候立即调用
 	virtual void BeginDestroy() override; //引擎在gc的时候调用，并不是立即调用，一般不用
-	virtual void DestroyComponent(bool bPromoteChildren = false) override; //立即调用，可用
+    virtual void EndPlay(const EEndPlayReason::Type EndPlayReason); //立即调用，可用
 	// End UActorComponent Interface.
 
     UFUNCTION(BlueprintCallable, Category = "UCoolDownComp")

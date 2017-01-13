@@ -25,9 +25,7 @@ void UCoolDownComp::BeginDestroy()
     Super::BeginDestroy();
 }
 
-void UCoolDownComp::DestroyComponent(bool bPromoteChildren /*= false*/)
+void UCoolDownComp::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-    UE_LOG(LogMyTest, Warning, TEXT("--- UCoolDownComp::DestroyComponent"));
-    Super::DestroyComponent(bPromoteChildren);
+    UE_LOG(LogMyTest, Warning, TEXT("--- UCoolDownComp::EndPlay"));
 }
-

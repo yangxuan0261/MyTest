@@ -24,8 +24,10 @@ void AMyActor::BeginPlay()
         mCDComp = NewObject<UCoolDownComp>(this, UCoolDownComp::StaticClass());
         mCDComp->RegisterComponent();
         //mCDComp->AttachToComponent()
-        this->GetRootComponent();
+        
         //mCDComp->attac
+        //mCDComp->AttachToComponent(this->GetRootComponent())
+
     }
 }
 
