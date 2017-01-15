@@ -2,11 +2,14 @@
 #include "MyGameInstance.h"
 
 #include "Actor/MyActor.h"
+#include "Common/ItemInfoDatabase.h"
+#include "Common/PrimeNumberWorker.h"
 
 UMyGameInstance::UMyGameInstance(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
 {
-
+	mStreamMgr = new FStreamableManager();
+	mDataBase = nullptr;
 }
 
 void UMyGameInstance::Init()
@@ -31,7 +34,8 @@ bool UMyGameInstance::ProcessConsoleExec(const TCHAR* Cmd, FOutputDevice& Ar, UO
 	return ret;
 }
 
-void UMyGameInstance::spawnActor(int32 num)
+
+void UMyGameInstance::SpawnActor(int32 num)
 {
 	for (int32 i = 0; i < num; i++)
 	{
@@ -41,7 +45,48 @@ void UMyGameInstance::spawnActor(int32 num)
 	}
 }
 
-void UMyGameInstance::forceGc()
+void UMyGameInstance::ForceGc()
 {
     GWorld->GetWorld()->ForceGarbageCollection(true);
+}
+
+void UMyGameInstance::MyAsyncTask()
+{
+	AsyncTask(ENamedThreads::GameThread, [&]()->void{
+		UE_LOG(LogMyTest, Warning, TEXT("--- UMyGameInstance::MyAsyncTask"));
+		SpawnActor(3);
+	});
+}
+
+void UMyGameInstance::MyAsyncThread()
+{
+	mNumVec.Empty();
+	FPrimeNumberWorker::JoyInit(mNumVec, this);
+	GetTimerManager().SetTimer(mTimer1, [&]()->void {
+		UE_LOG(LogMyTest, Warning, TEXT("--- UMyGameInstance::MyAsyncThread, mNumVec.Num=%d"), mNumVec.Num());
+	}, 1.0f, true);
+}
+
+void UMyGameInstance::LoadAsset(TSubclassOf<UItemInfoDatabase> dataAssetCls)
+{
+	if (!mDataBase)
+	{
+		
+		UObject* obj = mStreamMgr->SynchronousLoad(FStringAssetReference(TEXT("ItemInfoDatabase'/Game/TopDownCPP/MyBp/MyDataBaseMgrBp.MyDataBaseMgrBp'")));
+		//UItemInfoDatabase* mDataBase = NewObject<UItemInfoDatabase>(this, dataAssetCls);
+		mDataBase = Cast<UItemInfoDatabase>(obj);
+	}
+
+	TArray<FStringAssetReference> ObjToLoad;
+	for (int32 i = 0; i < mDataBase->MeshList.Num(); ++i)
+	{
+		ObjToLoad.AddUnique(mDataBase->MeshList[i].Texture.ToStringReference());
+	}
+	//ÇëÇóÒì²½¼ÓÔØ
+	mStreamMgr->RequestAsyncLoad(ObjToLoad, FStreamableDelegate::CreateUObject(this, &UMyGameInstance::LoadAssetCallback));
+}
+
+void UMyGameInstance::LoadAssetCallback()
+{
+	UE_LOG(LogMyTest, Warning, TEXT("--- UMyGameInstance::LoadAssetCallback"));
 }

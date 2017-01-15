@@ -2,6 +2,7 @@
 #include "MyGameInstance.generated.h"
 
 class AMyActor;
+class UItemInfoDatabase;
 
 UCLASS()
 class MYTEST_API UMyGameInstance : public UGameInstance
@@ -17,13 +18,30 @@ public:
 	virtual bool ProcessConsoleExec(const TCHAR* Cmd, FOutputDevice& Ar, UObject* Executor);
 public:
 	UFUNCTION(Exec)
-		virtual void spawnActor(int32 num);
+		virtual void SpawnActor(int32 num);
     UFUNCTION(Exec)
-        virtual void forceGc();
+		virtual void ForceGc();
+	UFUNCTION(Exec)
+		virtual void MyAsyncTask();
+	UFUNCTION(Exec)
+		virtual void MyAsyncThread();
+	UFUNCTION(BlueprintCallable, Category = "UMyGameInstance")
+
+		virtual void LoadAsset(TSubclassOf<UItemInfoDatabase> dataAssetCls);
+	virtual void LoadAssetCallback();
+
+
+
+public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UMyGameInstance")
         TSubclassOf<AMyActor>	mMyActorCls;
+
 private:
+	UItemInfoDatabase* mDataBase;
 	TArray<AMyActor*> mActorVec;
+	struct FStreamableManager* mStreamMgr;
+	FTimerHandle	mTimer1;
+	TArray<uint32> mNumVec;
 };
 
 #define GetGame()			UMyGameInstance::GetInstance()

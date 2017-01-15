@@ -26,8 +26,8 @@ void AMyActor::BeginPlay()
 
     if (!mCDComp)
     {
-        mCDComp = NewObject<UCoolDownComp>(this, UCoolDownComp::StaticClass());
-        mCDComp->RegisterComponent();
+        //mCDComp = NewObject<UCoolDownComp>(this, UCoolDownComp::StaticClass());
+        //mCDComp->RegisterComponent();
         //mCDComp->AttachToComponent()
         
         //mCDComp->attac
