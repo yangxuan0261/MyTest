@@ -63,7 +63,14 @@ void UMyGameInstance::MyAsyncThread()
 	mNumVec.Empty();
 	FPrimeNumberWorker::JoyInit(mNumVec, this);
 	GetTimerManager().SetTimer(mTimer1, [&]()->void {
+        FPrimeNumberWorker* pnw = FPrimeNumberWorker::Get();
+        if (!pnw) return;
+
+        FCriticalSection* cs = pnw->GetCriticalSection(); //获取FPrimeNumberWorker到中的互斥锁QueueCritical
+        FScopeLock QueueLock(cs);//锁住，等作用域过后QueueLock自动析构解锁
 		UE_LOG(LogMyTest, Warning, TEXT("--- UMyGameInstance::MyAsyncThread, mNumVec.Num=%d"), mNumVec.Num());
+        if (pnw->IsThreadFinished())
+            FPrimeNumberWorker::Shutdown();
 	}, 1.0f, true);
 }
 
