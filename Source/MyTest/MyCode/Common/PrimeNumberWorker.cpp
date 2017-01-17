@@ -8,7 +8,6 @@ FPrimeNumberWorker::FPrimeNumberWorker(TArray<uint32>& TheArray, UMyGameInstance
 	, StopTaskCounter(0)
 {
     ThreadSuspendedEvent = FPlatformProcess::GetSynchEventFromPool();
-    ThreadResumedEvent = FPlatformProcess::GetSynchEventFromPool();
 	PrimeNumbers = &TheArray;
 	Thread = FRunnableThread::Create(this, TEXT("FPrimeNumberWorker"), 0, TPri_BelowNormal); //windows default = 8mb for thread, could specify more
 }
@@ -19,8 +18,6 @@ FPrimeNumberWorker::~FPrimeNumberWorker()
 	Thread = nullptr;
     FPlatformProcess::ReturnSynchEventToPool(ThreadSuspendedEvent);
     ThreadSuspendedEvent = nullptr;
-    FPlatformProcess::ReturnSynchEventToPool(ThreadResumedEvent);
-    ThreadResumedEvent = nullptr;
 }
 
 bool FPrimeNumberWorker::Init()
@@ -42,11 +39,12 @@ uint32 FPrimeNumberWorker::Run()
 		//***************************************
         PrimeNumbers->Add(FindNextPrimeNumber());
         UE_LOG(LogMyTest, Warning, TEXT("--- FPrimeNumberWorker::Run, lock"));
-		//prevent thread from using too many resources
-		FPlatformProcess::Sleep(3.0f); //这里睡眠3秒是为了让GameThread中的UMyGameInstance::MyAsyncThread中的日志打不出来
+        //Suspend();
+        //prevent thread from using too many resources
+		FPlatformProcess::Sleep(1.0f); //这里睡眠3秒是为了让GameThread中的UMyGameInstance::MyAsyncThread中的日志打不出来
         delete QueueLock;//解锁
         UE_LOG(LogMyTest, Warning, TEXT("--- FPrimeNumberWorker::Run, unlock"));
-        FPlatformProcess::Sleep(2.0f); //这里睡眠2秒是为了让GameThread中获取到 互斥锁QueueCritical 并锁住
+        //FPlatformProcess::Sleep(2.0f); //这里睡眠2秒是为了让GameThread中获取到 互斥锁QueueCritical 并锁住
 	}
     Stop();
 	return 0;
@@ -55,6 +53,16 @@ uint32 FPrimeNumberWorker::Run()
 bool FPrimeNumberWorker::IsFinished()
 {
 	return PrimeNumbers->Num() == 5;
+}
+
+void FPrimeNumberWorker::Suspend()
+{
+    ThreadSuspendedEvent->Wait();
+}
+
+void FPrimeNumberWorker::Resume()
+{
+    ThreadSuspendedEvent->Trigger();
 }
 
 void FPrimeNumberWorker::Stop()

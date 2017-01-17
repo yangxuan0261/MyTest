@@ -19,6 +19,7 @@ void UMyGameInstance::Init()
 
 void UMyGameInstance::Shutdown()
 {
+    FPrimeNumberWorker::Shutdown();
 	Super::Shutdown();
 }
 
@@ -58,27 +59,36 @@ void UMyGameInstance::MyAsyncTask()
 	});
 }
 
+void UMyGameInstance::MyAsyncSuspend()
+{
+    FPrimeNumberWorker::Get()->Suspend();
+}
+
+void UMyGameInstance::MyAsyncResume()
+{
+    FPrimeNumberWorker::Get()->Resume();
+}
+
 void UMyGameInstance::MyAsyncThread()
 {
 	mNumVec.Empty();
 	FPrimeNumberWorker::JoyInit(mNumVec, this);
-	GetTimerManager().SetTimer(mTimer1, [&]()->void {
-        FPrimeNumberWorker* pnw = FPrimeNumberWorker::Get();
-        if (!pnw) return;
+	//GetTimerManager().SetTimer(mTimer1, [&]()->void {
+ //       FPrimeNumberWorker* pnw = FPrimeNumberWorker::Get();
+ //       if (!pnw) return;
 
-        FCriticalSection* cs = pnw->GetCriticalSection(); //获取FPrimeNumberWorker到中的互斥锁QueueCritical
-        FScopeLock QueueLock(cs);//锁住，等作用域过后QueueLock自动析构解锁
-		UE_LOG(LogMyTest, Warning, TEXT("--- UMyGameInstance::MyAsyncThread, mNumVec.Num=%d"), mNumVec.Num());
-        if (pnw->IsThreadFinished())
-            FPrimeNumberWorker::Shutdown();
-	}, 1.0f, true);
+ //       FCriticalSection* cs = pnw->GetCriticalSection(); //获取FPrimeNumberWorker到中的互斥锁QueueCritical
+ //       FScopeLock QueueLock(cs);//锁住，等作用域过后QueueLock自动析构解锁
+	//	UE_LOG(LogMyTest, Warning, TEXT("--- UMyGameInstance::MyAsyncThread, mNumVec.Num=%d"), mNumVec.Num());
+ //       if (pnw->IsThreadFinished())
+ //           FPrimeNumberWorker::Shutdown();
+	//}, 1.0f, true);
 }
 
 void UMyGameInstance::LoadAsset(TSubclassOf<UItemInfoDatabase> dataAssetCls)
 {
 	if (!mDataBase)
 	{
-		
 		UObject* obj = mStreamMgr->SynchronousLoad(FStringAssetReference(TEXT("ItemInfoDatabase'/Game/TopDownCPP/MyBp/MyDataBaseMgrBp.MyDataBaseMgrBp'")));
 		//UItemInfoDatabase* mDataBase = NewObject<UItemInfoDatabase>(this, dataAssetCls);
 		mDataBase = Cast<UItemInfoDatabase>(obj);

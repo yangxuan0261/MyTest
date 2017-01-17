@@ -8,15 +8,16 @@ class FPrimeNumberWorker : public FRunnable
 	FRunnableThread* Thread;
 	TArray<uint32>* PrimeNumbers;
 	UMyGameInstance* mGameIns;
-	FThreadSafeCounter StopTaskCounter;
+	FThreadSafeCounter StopTaskCounter; //用于多线程间的判断交互，volatile int32 Counter;
 	int32 FindNextPrimeNumber();
 
-    FCriticalSection QueueCritical;
-    FEvent* ThreadSuspendedEvent;
-    FEvent* ThreadResumedEvent;
+    FCriticalSection QueueCritical; //互斥锁
+    FEvent* ThreadSuspendedEvent;   //线程悬挂和唤醒事件
 
 public:
 	bool IsFinished();
+    void Suspend();
+    void Resume();
 
 	//Constructor / Destructor
 	FPrimeNumberWorker(TArray<uint32>& TheArray, UMyGameInstance* GameIns);

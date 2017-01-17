@@ -23,6 +23,10 @@ public:
 		virtual void ForceGc();
 	UFUNCTION(Exec)
 		virtual void MyAsyncTask();
+    UFUNCTION(Exec)
+        virtual void MyAsyncSuspend();
+    UFUNCTION(Exec)
+        virtual void MyAsyncResume();
 	UFUNCTION(Exec)
 		virtual void MyAsyncThread();
 	UFUNCTION(BlueprintCallable, Category = "UMyGameInstance")
