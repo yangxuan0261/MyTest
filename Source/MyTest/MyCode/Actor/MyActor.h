@@ -20,11 +20,19 @@ public:
 	void SetInfo(FString name);
 
 	UFUNCTION(Exec)
-	void Say();
+		void Say();
+
+	UFUNCTION(BlueprintCallable, Category = AMyActor)
+		void StartTimer();
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AMyActor)
+		int mLeftTime;
 
 private:
 	FString mName;
     class UCoolDownComp* mCDComp;
+	FTimerHandle	mTimer;
 };
 
 

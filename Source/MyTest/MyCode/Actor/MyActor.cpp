@@ -7,6 +7,7 @@ AMyActor::AMyActor() : Super()
 {
     UE_LOG(LogMyTest, Warning, TEXT("--- AMyActor::AMyActor"));
     mCDComp = nullptr;
+	mLeftTime = 10;
 }
 
 AMyActor::~AMyActor()
@@ -68,5 +69,16 @@ void AMyActor::Say()
 	UE_LOG(LogMyTest, Warning, TEXT("name:%s, Say hello"), *mName);
 }
 
+void AMyActor::StartTimer()
+{
+	auto lambda = [&]()->void {
+		mLeftTime -= 1;
 
+		if (mLeftTime < 5)
+			GWorld->GetTimerManager().ClearTimer(mTimer);
+	};
 
+	auto dlg = FTimerDelegate::CreateLambda(lambda);
+	//auto dlg = FTimerDelegate::CreateUObject(this, &AMyActor::TimerCount);
+	GWorld->GetTimerManager().SetTimer(mTimer, dlg, 1.0f, true);
+}
