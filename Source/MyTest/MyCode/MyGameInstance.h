@@ -29,8 +29,13 @@ public:
         virtual void MyAsyncResume();
 	UFUNCTION(Exec)
 		virtual void MyAsyncThread();
+	UFUNCTION(Exec)
+		virtual void MyDefine();
+	UFUNCTION(Exec)
+		virtual void ReadConfig();
+	UFUNCTION(Exec)
+		virtual void WriteConfig();
 	UFUNCTION(BlueprintCallable, Category = "UMyGameInstance")
-
 		virtual void LoadAsset(TSubclassOf<UItemInfoDatabase> dataAssetCls);
 	virtual void LoadAssetCallback();
 

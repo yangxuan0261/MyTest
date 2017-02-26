@@ -85,6 +85,62 @@ void UMyGameInstance::MyAsyncThread()
 	//}, 1.0f, true);
 }
 
+void UMyGameInstance::MyDefine()
+{
+#ifdef HELLO_WORLD
+	UE_LOG(LogMyTest, Warning, TEXT("--- UMyGameInstance::MyDefine, had define macro: HELLO_WORLD"));
+#endif // HELLO_WORLD
+}
+
+void UMyGameInstance::ReadConfig()
+{
+	if (!GConfig)
+		return;
+
+	float ValueReceived =0.f;
+	GConfig->GetFloat(
+		TEXT("/Script/MyTest.MyTestCharacter"),
+		TEXT("FixedCameraDistance"),
+		ValueReceived,
+		GGameIni
+	);
+
+	FString ProjName = "";
+	GConfig->GetString(
+		TEXT("/Script/EngineSettings.GeneralProjectSettings"),
+		TEXT("ProjectName"),
+		ProjName,
+		GGameIni
+	);
+	UE_LOG(LogMyTest, Warning, TEXT("--- UMyGameInstance::ReadConfig, GGameIni:%s, ValueReceived:%f, ProjName:%s"), *GGameIni, ValueReceived, *ProjName);
+//LogMyTest:Warning: -- - UMyGameInstance::ReadConfig, GGameIni : F : / workplace_ue4 / MyTest / Saved / Config / Windows / Game.ini, ValueReceived : 1500.000000
+}
+
+void UMyGameInstance::WriteConfig()
+{
+	if (!GConfig)
+		return;
+
+	const FString WriteSection = "MyCustomSection";
+	//String
+	GConfig->SetString(
+		*WriteSection,
+		TEXT("key1"),
+		TEXT("Hello world"),
+		GGameIni
+	);
+	GConfig->Flush(false, GGameIni);
+
+	FString MyStr = "";
+	GConfig->GetString(
+		*WriteSection,
+		TEXT("key1"),
+		MyStr,
+		GGameIni
+	);
+	UE_LOG(LogMyTest, Warning, TEXT("--- UMyGameInstance::WriteConfig, GGameIni:%s, MyStr:%s"), *GGameIni, *MyStr);
+}
+
 void UMyGameInstance::LoadAsset(TSubclassOf<UItemInfoDatabase> dataAssetCls)
 {
 	if (!mDataBase)
