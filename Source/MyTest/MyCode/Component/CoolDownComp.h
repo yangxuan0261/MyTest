@@ -2,7 +2,7 @@
 #include "CoolDownComp.generated.h"
 
 UCLASS(Blueprintable, BlueprintType)
-class MYTEST_API UCoolDownComp : public UActorComponent
+class MYTEST_API UCoolDownComp : public USceneComponent
 {
 	GENERATED_BODY()
 public:
@@ -20,6 +20,7 @@ public:
 
     UFUNCTION(BlueprintCallable, Category = "UCoolDownComp")
         void	SetName(FString name) { mName = name; }
-private:
-    FString mName;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UCoolDownComp")
+        FString mName;
 };

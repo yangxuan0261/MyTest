@@ -5,6 +5,7 @@
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 #include "Runtime/Engine/Classes/Components/DecalComponent.h"
 #include "Kismet/HeadMountedDisplayFunctionLibrary.h"
+#include "MyCode/Component/CoolDownComp.h"
 
 AMyTestCharacter::AMyTestCharacter()
 {
@@ -45,6 +46,14 @@ AMyTestCharacter::AMyTestCharacter()
 	}
 	CursorToWorld->DecalSize = FVector(16.0f, 32.0f, 32.0f);
 	CursorToWorld->SetRelativeRotation(FRotator(90.0f, 0.0f, 0.0f).Quaternion());
+
+    static ConstructorHelpers::FClassFinder<UCoolDownComp> CDComplAsset(TEXT("/Game/TopDownCPP/MyBp/CDCompBp"));
+    if (CDComplAsset.Succeeded())
+    {
+        UE_LOG(LogMyTest, Warning, TEXT("--- CDComplAsset.Succeeded()"));
+        mCDComp = NewObject<UCoolDownComp>(this, CDComplAsset.Class, "UCoolDownComp");
+        mCDComp->SetupAttachment(RootComponent);
+    }
 
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;

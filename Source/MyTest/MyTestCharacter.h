@@ -3,6 +3,8 @@
 #include "GameFramework/Character.h"
 #include "MyTestCharacter.generated.h"
 
+class UCoolDownComp;
+
 UCLASS(Blueprintable)
 class AMyTestCharacter : public ACharacter
 {
@@ -21,6 +23,9 @@ public:
 	/** Returns CursorToWorld subobject **/
 	FORCEINLINE class UDecalComponent* GetCursorToWorld() { return CursorToWorld; }
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))
+        class UCoolDownComp* mCDComp;
+
 private:
 	/** Top down camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -33,5 +38,6 @@ private:
 	/** A decal that projects to the cursor location. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UDecalComponent* CursorToWorld;
+
 };
 
